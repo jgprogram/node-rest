@@ -1,39 +1,32 @@
-var port = process.env.PORT || 8888;
-var http = require('http');
+var express = require('express');
+var bodyParser = require('body-parser');
 var movies = require('./data/movies.json');
 
-var requestHandler = function(request, response) {
-  if(request.method === 'GET') {
-    if(request.url === '/') {
-      response.end(JSON.stringify(movies, null, 2));
-    } else {
-      const movieInx = parseInt(request.url.substr(1));
-      if(movieInx === 0 || movieInx && movies[movieInx]) {
-        response.end(JSON.stringify(movies[movieInx], null, 2));
-      } else {
-        response.statusCode = 404;
-        response.end();
-      }
-    }
-  } else if(request.method === 'POST') {
-    let bodyChunks = [];
-    request.on('data', function(chunk) {
-      bodyChunks.push(chunk);
-    }).on('end', function() {
-      const json = Buffer.concat(bodyChunks).toString();
-      try {
-        const newMovie = JSON.parse(json);
-        movies.push(newMovie);
-        response.setHeader('Location', '/' + (movies.length - 1));
-        response.statusCode = 201;
-      } catch (err) {
-        response.statusCode = 500;
-      } finally {
-        response.end();
-      }
-    });
-  }
-}
+const port = process.env.PORT || 8888;
 
-var server = http.createServer(requestHandler);
-server.listen(port);
+var app = express();
+app.use(bodyParser.json());
+
+app.get('/movies', (request, response) => {
+  response.send(JSON.stringify(movies, null, 2));
+});
+
+app.get('/movies/:movieIndex', (request, response) => {
+  const movieInx = parseInt(request.params.movieIndex);
+  if(movieInx === 0 || movieInx && movies[movieInx]) {
+    response.send(JSON.stringify(movies[movieInx], null, 2));
+  } else {
+    response.status(404);
+    response.send('Not found :(');
+  }
+});
+
+app.post('/movies/', (request, response) => {
+  const newMovie = request.body;
+  movies.push(newMovie);
+  response.location('/' + (movies.length - 1));
+  response.status(201);
+  response.send('Movie ' + (movies.length - 1) + ' created ;)');
+});
+
+var server = app.listen(port);
