@@ -1,0 +1,26 @@
+[
+  { 
+    "name": "The cowboy", 
+    "year": 2016, 
+    "studio": "Rocksun Studio", 
+    "genere": "Western",
+    "rating": "R",
+    "runtime": 121,
+    "director": "Ryley Ryan",
+    "description": "Nullam lobortis at dui ut cursus. Suspendisse rhoncus, felis fringilla rhoncus mollis, quam enim auctor sem, eu euismod neque elit in lorem. Fusce aliquam lorem vitae diam maximus, sed finibus massa malesuada. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus finibus metus a eros scelerisque, in vestibulum metus cursus. Curabitur ligula turpis, suscipit ut suscipit quis, venenatis dignissim augue. Nulla sapien ligula, luctus sed mauris sit amet, imperdiet ultricies purus. Integer quis pellentesque ante. Nullam a consectetur diam. Quisque a molestie lectus, non finibus erat. ",
+    "reviews": [
+      { 
+        "name": "Herley Wildeman", 
+        "score": 4, 
+        "date": "2017-02-27T16:04:06.565Z",
+        "description": "Vivamus ut aliquam urna, quis gravida sem. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Curabitur sodales non arcu ac bibendum. Phasellus ut ligula aliquet lectus aliquet consequat. Aliquam risus nunc, dignissim vel velit sed, consectetur ullamcorper eros. Sed sollicitudin vitae libero ut vestibulum. Etiam varius at ipsum non accumsan. Vestibulum eu bibendum metus. Donec id augue tristique, ullamcorper libero ac, laoreet nulla. Proin aliquam facilisis sem in pulvinar. Ut vestibulum suscipit dui vitae vulputate. Curabitur pulvinar elementum hendrerit. Nulla convallis ornare nunc, vitae pharetra mi. Mauris at dapibus quam."
+      },
+      { 
+        "name": "Anna Forslind",  
+        "score": 3,
+        "date": "2017-03-15T07:24:11.144Z",
+        "description": "Quisque felis nulla, dignissim eu metus ut, tempus facilisis ipsum. Integer nec euismod nibh. Phasellus faucibus placerat nunc, dictum tempor libero pulvinar quis. Sed imperdiet vestibulum ipsum, eget hendrerit nisi mollis et. Fusce sodales malesuada tincidunt. Praesent iaculis fermentum eros posuere interdum. Nullam pharetra nisi ac leo lobortis, ut auctor quam sagittis. "
+      } 
+    ]    
+  }
+]
