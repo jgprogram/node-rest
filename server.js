@@ -29,4 +29,17 @@ app.post('/movies/', (request, response) => {
   response.send('Movie ' + (movies.length - 1) + ' created ;)');
 });
 
+app.put('/movies/:movieIndex', (request, response) => {
+  const movie = request.body;
+  const movieInx = parseInt(request.params.movieIndex);
+  if (movieInx < movies.length) {
+    movies[movieInx] = movie;
+    response.status(200);
+    response.send('Movie ' + movieInx + ' updated :D');
+  } else {
+    response.status(404);
+    response.send('Not found :(');
+  }
+});
+
 var server = app.listen(port);
