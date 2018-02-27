@@ -1,20 +1,24 @@
-var express = require('express');
-var bodyParser = require('body-parser');
-var movies = require('./data/movies.json');
+const express = require('express');
+const bodyParser = require('body-parser');
+const movies = require('./data/movies.json');
+const MoviesRepository = require('./movies-repository');
 
 const port = process.env.PORT || 8888;
-
-var app = express();
+const app = express();
 app.use(bodyParser.json());
 
+const moviesRepo = new MoviesRepository();
+movies.forEach((movie) => { moviesRepo.add(movie) });
+
 app.get('/movies', (request, response) => {
-  response.send(JSON.stringify(movies, null, 2));
+  response.send(JSON.stringify(moviesRepo.findAll(), null, 2));
 });
 
-app.get('/movies/:movieIndex', (request, response) => {
-  const movieInx = parseInt(request.params.movieIndex);
-  if(movieInx === 0 || movieInx && movies[movieInx]) {
-    response.send(JSON.stringify(movies[movieInx], null, 2));
+app.get('/movies/:id', (request, response) => {
+  const movieId = parseInt(request.params.id);
+  const movie = moviesRepo.find(movieId);
+  if(movie) {
+    response.send(JSON.stringify(movie, null, 2));
   } else {
     response.status(404);
     response.send('Not found :(');
@@ -23,23 +27,36 @@ app.get('/movies/:movieIndex', (request, response) => {
 
 app.post('/movies/', (request, response) => {
   const newMovie = request.body;
-  movies.push(newMovie);
-  response.location('/' + (movies.length - 1));
+  const id = moviesRepo.add(newMovie);
+  response.location('/movies/' + id);
   response.status(201);
-  response.send('Movie ' + (movies.length - 1) + ' created ;)');
+  response.send('Movie ' + id + ' created ;)');
 });
 
-app.put('/movies/:movieIndex', (request, response) => {
+app.put('/movies/:id', (request, response) => {
   const movie = request.body;
-  const movieInx = parseInt(request.params.movieIndex);
-  if (movieInx < movies.length) {
-    movies[movieInx] = movie;
+  const movieId = parseInt(request.params.id);
+    
+  if(moviesRepo.find(movieId)) {
+    moviesRepo.update(movieId, movie);
     response.status(200);
-    response.send('Movie ' + movieInx + ' updated :D');
+    response.send('Movie ' + movieId + ' updated :D');
   } else {
     response.status(404);
-    response.send('Not found :(');
+    response.send('Movie ' + movieId + ' not found :(');
   }
 });
 
-var server = app.listen(port);
+app.delete('/movies/:id', (request, response) => {
+  const movieId = parseInt(request.params.id);
+  if(moviesRepo.find(movieId)) {
+    moviesRepo.remove(movieId);
+    response.status(204);
+    response.send('Movie ' + movieId + ' deleted :p');
+  } else {
+    response.status(404);
+    response.send('Movie ' + movieId + ' not found :(');
+  }
+});
+
+const server = app.listen(port);
