@@ -1,3 +1,6 @@
+const rawMovies = require('./data/movies.json');
+
+
 module.exports = function MoviesRepository() {
   var serial = 0;
   var movies = [];
@@ -34,4 +37,6 @@ module.exports = function MoviesRepository() {
       throw 'There is no movie ' + id;
     }
   }
+
+  rawMovies.forEach((movie) => { this.add(movie); });
 }
