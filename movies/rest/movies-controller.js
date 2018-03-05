@@ -1,50 +1,98 @@
 module.exports = function (moviesRepo) {
   this.findAll = (request, response) => {
-    response.send(JSON.stringify(moviesRepo.findAll(), null, 2));
+    moviesRepo.findAll()
+      .then((movies) => {
+        response.send(JSON.stringify(movies, null, 2));
+      })
+      .catch((err) => {
+        addInternalErrorResponse(response);
+      });
   }
 
   this.findById = (request, response) => {
     const movieId = parseInt(request.params.id);
-    const movie = moviesRepo.find(movieId);
-    if(movie) {
-      response.send(JSON.stringify(movie, null, 2));
-    } else {
-      response.status(404);
-      response.send('Not found :(');
-    }
+
+    moviesRepo.find(movieId)
+      .then((movie) => {
+        if(movie) {
+          response.send(JSON.stringify(movie, null, 2));
+        } else {
+          addNotFoundResponse(response);
+        }
+      })
+      .catch((err) => {
+        addInternalErrorResponse(response);
+      });
   }
 
   this.addMovie = (request, response) => {
     const newMovie = request.body;
-    const id = moviesRepo.add(newMovie);
-    response.location('/movies/' + id);
-    response.status(201);
-    response.send('Movie ' + id + ' created ;)');
+    
+    moviesRepo.add(newMovie)
+      .then((id) => {
+        response.location('/movies/' + id);
+        response.status(201);
+        response.send('Movie ' + id + ' created ;)');
+      })
+      .catch((err) => {
+        addInternalErrorResponse(response);
+      });
   }
 
   this.updateMovie = (request, response) => {
-    const movie = request.body;
+    const newMovie = request.body;
     const movieId = parseInt(request.params.id);
-    
-    if(moviesRepo.find(movieId)) {
-      moviesRepo.update(movieId, movie);
-      response.status(200);
-      response.send('Movie ' + movieId + ' updated :D');
-    } else {
-      response.status(404);
-      response.send('Movie ' + movieId + ' not found :(');
-    }
+
+    moviesRepo.find(movieId)
+      .then((movie) => {
+        if(movie) {
+          moviesRepo.update(movieId, newMovie)
+            .then(() => {
+              response.status(200);
+              response.send('Movie ' + movieId + ' updated :D');
+            })
+            .catch((err) => {
+              addInternalErrorResponse(response);
+           });
+        } else {
+          addNotFoundResponse(response);
+        }
+      })
+      .catch((err) => {
+        addInternalErrorResponse(response);
+      });
   }
 
   this.deleteMovie = (request, response) => {
-    const movieId = parseInt(request.params.id); 
-    if(moviesRepo.find(movieId)) {
-      moviesRepo.remove(movieId);
-      response.status(204);
-      response.send('Movie ' + movieId + ' deleted :p');
-    } else {
-      response.status(404);
-      response.send('Movie ' + movieId + ' not found :(');
-    }
+    const movieId = parseInt(request.params.id);
+
+    moviesRepo.find(movieId)
+      .then((movie) => {
+        if(movie) {
+          moviesRepo.remove(movieId)
+            .then(() => {
+              response.status(204);
+              response.send('Movie ' + movieId + ' deleted :D');
+            })
+            .catch((err) => {
+              addInternalErrorResponse(response);
+           });
+        } else {
+          addNotFoundResponse(response);
+        }
+      })
+      .catch((err) => {
+        addInternalErrorResponse(response);
+      });    
+  }
+
+  function addNotFoundResponse(response) {
+    response.status(404);
+    response.send('Not found :(');
+  }
+
+  function addInternalErrorResponse(response) {
+    response.status(500);
+    response.send('Internal Server Error');
   }
 }

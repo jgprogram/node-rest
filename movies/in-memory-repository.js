@@ -6,36 +6,48 @@ module.exports = function MoviesRepository() {
   var movies = [];
 
   this.findAll = () => {
-    return movies;
+    return new Promise((resolve, reject) => {
+      resolve(movies);
+    });
   }
 
   this.find = (id) => {
-    return movies.find((m) => m.id === id);
+    return new Promise((resolve, reject) => {
+      resolve(movies.find((m) => m.id === id));
+    });
   }
 
   this.add = (movie) => {
-    movie.id = ++serial;
-    movies.push(movie);
-    return movie.id;
+    return new Promise((resolve, reject) => {
+      movie.id = ++serial;
+      movies.push(movie);
+      resolve(movie.id);
+    });
   }
 
   this.update = (id, movie) => {
-    const movieInx = movies.findIndex((m) => m.id === id);
-    if (movieInx > -1) {
-      movie.id = id;
-      movies[movieInx] = movie;
-    } else {
-      throw 'There is no movie ' + id;
-    }
+    return new Promise((resolve, reject) => {
+      const movieInx = movies.findIndex((m) => m.id === id);
+      if (movieInx > -1) {
+        movie.id = id;
+        movies[movieInx] = movie;
+        resolve();
+      } else {
+        reject('There is no movie ' + id);
+      }
+    });
   }
 
   this.remove = (id) => {
-    const movieInx = movies.findIndex((m) => m.id === id);
-    if (movieInx !== -1) {
-      movies.splice(movieInx, 1);
-    } else {
-      throw 'There is no movie ' + id;
-    }
+    return new Promise((resolve, reject) => {
+      const movieInx = movies.findIndex((m) => m.id === id);
+      if (movieInx !== -1) {
+        movies.splice(movieInx, 1);
+        resolve();
+      } else {
+        reject('There is no movie ' + id);
+      }
+    });
   }
 
   rawMovies.forEach((movie) => { this.add(movie); });
